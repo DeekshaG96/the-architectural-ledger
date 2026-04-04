@@ -1,0 +1,75 @@
+{
+  "entities": {
+    "users": {
+      "title": "User Profile",
+      "description": "User profile information stored in Firestore",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "employees": {
+      "title": "Employee",
+      "description": "Employee record",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string" },
+        "department": { "type": "string" },
+        "status": { "type": "string" },
+        "joinDate": { "type": "string" },
+        "avatar": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "role", "department"]
+    },
+    "announcements": {
+      "title": "Announcement",
+      "description": "Real-time announcement",
+      "type": "object",
+      "properties": {
+        "text": { "type": "string" },
+        "author": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["text", "author"]
+    },
+    "payroll_history": {
+      "title": "Payroll Record",
+      "description": "A record of a payroll run.",
+      "type": "object",
+      "properties": {
+        "timestamp": { "type": "string", "format": "date-time" },
+        "totalAmount": { "type": "number" },
+        "employeeCount": { "type": "integer" },
+        "status": { "type": "string", "enum": ["completed", "pending", "failed"] },
+        "processedBy": { "type": "string" }
+      },
+      "required": ["timestamp", "totalAmount", "employeeCount", "status", "processedBy"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "users",
+      "description": "User profile documents"
+    },
+    "/employees/{employeeId}": {
+      "schema": "employees",
+      "description": "Employee documents"
+    },
+    "/announcements/{announcementId}": {
+      "schema": "announcements",
+      "description": "Announcement documents"
+    },
+    "/payroll_history/{recordId}": {
+      "schema": "payroll_history",
+      "description": "Payroll run records"
+    }
+  }
+}
