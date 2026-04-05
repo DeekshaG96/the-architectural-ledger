@@ -1,5 +1,5 @@
 {
-  "name": "react-example",
+  "name": "the-architectural-ledger",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,8 +7,10 @@
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
-    "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
+    "lint": "tsc --noEmit",
+    "deploy": "firebase deploy",
+    "deploy:hosting": "firebase deploy --only hosting"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { DEPARTMENTS } from '../constants';
 import { motion } from 'motion/react';
+import { cn } from '../lib/utils';
 
 const iconMap: Record<string, any> = {
   code: Code,
@@ -19,6 +20,14 @@ const iconMap: Record<string, any> = {
   bank: Landmark,
   settings: Settings,
   users: Users,
+};
+
+const departmentThemeClasses: Record<string, string> = {
+  primary: 'bg-primary-container/20 text-primary',
+  secondary: 'bg-secondary-container/20 text-secondary',
+  tertiary: 'bg-tertiary-container/20 text-tertiary',
+  'surface-variant': 'bg-surface-variant/50 text-on-surface-variant',
+  'primary-fixed-dim': 'bg-primary-fixed-dim/40 text-on-primary-fixed-variant',
 };
 
 export function Departments() {
@@ -52,6 +61,7 @@ export function Departments() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {DEPARTMENTS.map((dept, i) => {
           const Icon = iconMap[dept.icon] || Building2;
+          const themeClass = departmentThemeClasses[dept.color] || departmentThemeClasses.primary;
           return (
             <motion.div 
               key={dept.id}
@@ -62,7 +72,7 @@ export function Departments() {
             >
               <div>
                 <div className="flex justify-between items-start mb-6">
-                  <div className={`w-14 h-14 rounded-xl bg-${dept.color}-container/20 flex items-center justify-center text-${dept.color}`}>
+                  <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center", themeClass)}>
                     <Icon size={32} />
                   </div>
                   <span className="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold tracking-tight">Active</span>
@@ -122,13 +132,13 @@ export function Departments() {
         </div>
         <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
-            { value: '05', label: 'Total Departments', color: 'primary' },
-            { value: '115', label: 'Active Headcount', color: 'on-background' },
-            { value: '08', label: 'Pending Roles', color: 'on-background' },
-            { value: '24%', label: 'Q4 Growth Rate', color: 'on-background' },
+            { value: '05', label: 'Total Departments', className: 'text-primary' },
+            { value: '115', label: 'Active Headcount', className: 'text-on-background' },
+            { value: '08', label: 'Pending Roles', className: 'text-on-background' },
+            { value: '24%', label: 'Q4 Growth Rate', className: 'text-on-background' },
           ].map((stat) => (
             <div key={stat.label}>
-              <p className={`text-4xl font-extrabold font-headline text-${stat.color} mb-1`}>{stat.value}</p>
+              <p className={cn("text-4xl font-extrabold font-headline mb-1", stat.className)}>{stat.value}</p>
               <p className="text-xs font-bold uppercase text-outline">{stat.label}</p>
             </div>
           ))}

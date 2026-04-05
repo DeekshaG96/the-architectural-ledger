@@ -35,7 +35,8 @@ import { collection, onSnapshot, query, orderBy, limit, addDoc, serverTimestamp 
 import { db } from '../firebase';
 import { useAuth } from '../context/AuthContext';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY?.trim();
+const ai = geminiApiKey ? new GoogleGenAI({ apiKey: geminiApiKey }) : null;
 
 interface Announcement {
   id: string;
@@ -57,6 +58,41 @@ export function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [employees, setEmployees] = useState<any[]>([]);
   const [employeeCount, setEmployeeCount] = useState(0);
+
+  const dashboardStats = [
+    {
+      label: 'Total Employees',
+      value: employeeCount.toString(),
+      icon: Users,
+      trend: '+12%',
+      cardClass: 'border-primary',
+      iconClass: 'bg-primary-container/20 text-primary',
+    },
+    {
+      label: 'Active Staff',
+      value: employeeCount.toString(),
+      icon: UserCheck,
+      trend: 'Active',
+      cardClass: 'border-tertiary',
+      iconClass: 'bg-tertiary-container/20 text-tertiary',
+    },
+    {
+      label: 'Departments',
+      value: '18',
+      icon: Bot,
+      trend: 'Global',
+      cardClass: 'border-secondary',
+      iconClass: 'bg-secondary-container/20 text-secondary',
+    },
+    {
+      label: 'New Hires (MoM)',
+      value: '34',
+      icon: UserPlus,
+      trend: 'New',
+      cardClass: 'border-error',
+      iconClass: 'bg-error-container/20 text-error',
+    },
+  ] as const;
 
   useEffect(() => {
     const q = query(collection(db, 'announcements'), orderBy('timestamp', 'desc'), limit(5));
@@ -133,6 +169,12 @@ export function Dashboard() {
 
   const askAI = async () => {
     if (!aiQuery.trim()) return;
+
+    if (!ai) {
+      setAiResponse('Add VITE_GEMINI_API_KEY to your Firebase web app environment to enable the AI assistant.');
+      return;
+    }
+
     setIsAiLoading(true);
     setAiResponse('');
     try {
@@ -238,21 +280,19 @@ export function Dashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[
-          { label: 'Total Employees', value: employeeCount.toString(), icon: Users, trend: '+12%', color: 'primary' },
-          { label: 'Active Staff', value: employeeCount.toString(), icon: UserCheck, trend: 'Active', color: 'tertiary' },
-          { label: 'Departments', value: '18', icon: Bot, trend: 'Global', color: 'secondary' },
-          { label: 'New Hires (MoM)', value: '34', icon: UserPlus, trend: 'New', color: 'error' },
-        ].map((stat, i) => (
+        {dashboardStats.map((stat, i) => (
           <motion.div 
             key={stat.label}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className={`bg-surface-container-lowest p-6 rounded-xl shadow-sm border-b-2 border-${stat.color} ring-1 ring-slate-100`}
+            className={cn(
+              "bg-surface-container-lowest p-6 rounded-xl shadow-sm border-b-2 ring-1 ring-slate-100",
+              stat.cardClass
+            )}
           >
             <div className="flex justify-between items-start mb-4">
-              <div className={`p-2 bg-${stat.color}-container/20 rounded-lg text-${stat.color}`}>
+              <div className={cn("p-2 rounded-lg", stat.iconClass)}>
                 <stat.icon size={24} />
               </div>
               <span className={`text-[10px] font-bold px-2 py-1 rounded uppercase tracking-tighter ${

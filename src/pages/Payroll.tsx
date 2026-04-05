@@ -110,6 +110,37 @@ export function Payroll() {
     emp.department.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const summaryCards = [
+    {
+      label: 'Total Monthly Payroll',
+      value: stats.totalMonthly,
+      icon: DollarSign,
+      trend: '+4.2%',
+      iconClass: 'bg-primary/10 text-primary',
+    },
+    {
+      label: 'Average Salary',
+      value: stats.averageSalary,
+      icon: TrendingUp,
+      trend: '+1.5%',
+      iconClass: 'bg-tertiary/10 text-tertiary',
+    },
+    {
+      label: 'Total Recipients',
+      value: stats.employeeCount,
+      icon: Users,
+      trend: '0%',
+      iconClass: 'bg-secondary/10 text-secondary',
+    },
+    {
+      label: 'Next Disbursement',
+      value: stats.nextPayDate,
+      icon: Calendar,
+      trend: 'Scheduled',
+      iconClass: 'bg-on-background/10 text-on-background',
+    },
+  ] as const;
+
   const handleRunPayroll = async () => {
     if (employees.length === 0) return;
     
@@ -158,12 +189,7 @@ export function Payroll() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[
-          { label: 'Total Monthly Payroll', value: stats.totalMonthly, icon: DollarSign, trend: '+4.2%', color: 'primary' },
-          { label: 'Average Salary', value: stats.averageSalary, icon: TrendingUp, trend: '+1.5%', color: 'tertiary' },
-          { label: 'Total Recipients', value: stats.employeeCount, icon: Users, trend: '0%', color: 'secondary' },
-          { label: 'Next Disbursement', value: stats.nextPayDate, icon: Calendar, trend: 'Scheduled', color: 'on-background' },
-        ].map((stat, i) => (
+        {summaryCards.map((stat, i) => (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -172,7 +198,7 @@ export function Payroll() {
             className="bg-surface-container-lowest p-6 rounded-2xl shadow-sm ring-1 ring-slate-100"
           >
             <div className="flex justify-between items-start mb-4">
-              <div className={cn("p-3 rounded-xl", `bg-${stat.color}/10 text-${stat.color}`)}>
+              <div className={cn("p-3 rounded-xl", stat.iconClass)}>
                 <stat.icon size={24} />
               </div>
               <span className={cn(
